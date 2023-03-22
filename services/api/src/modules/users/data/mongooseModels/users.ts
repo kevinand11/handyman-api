@@ -55,7 +55,27 @@ const UserSchema = new appInstance.dbs.mongo.Schema<UserFromModel>({
 		required: false,
 		default: null
 	},
-	meta: Meta
+	meta: Meta,
+	ratings: {
+		count: {
+			type: Number,
+			required: false,
+			default: 0,
+			min: 0
+		},
+		total: {
+			type: Number,
+			required: false,
+			default: 0,
+			min: 0
+		},
+		avg: {
+			type: Number,
+			required: false,
+			default: 0,
+			min: 0
+		}
+	}
 }, { minimize: false })
 
 export const User = appInstance.dbs.mongo.use().model<UserFromModel>('User', UserSchema)

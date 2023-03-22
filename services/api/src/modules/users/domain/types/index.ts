@@ -39,3 +39,9 @@ export type UserLocation = {
 	coords: [number, number]
 	hash: string
 }
+
+export type UserRatings = {
+	total: number
+	count: number
+	avg: number
+}

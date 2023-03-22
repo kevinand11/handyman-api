@@ -20,4 +20,6 @@ export interface IUserRepository {
 	updateLocation (userId: string, location: UserLocation): Promise<UserEntity | null>
 
 	resetAllUsersStatus (): Promise<boolean>
+
+	updateRatings (userId: string, ratings: number, add: boolean): Promise<boolean>
 }

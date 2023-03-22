@@ -1,6 +1,6 @@
 import { AuthUserType } from '@modules/auth'
 import { BaseEntity, Validation } from 'equipped'
-import { EmbeddedUser, UserBio, UserDates, UserLocation, UserMetaType, UserRoles, UserStatus } from '../types'
+import { EmbeddedUser, UserBio, UserDates, UserLocation, UserMetaType, UserRatings, UserRoles, UserStatus } from '../types'
 
 export class UserEntity extends BaseEntity {
 	public readonly id: string
@@ -10,8 +10,9 @@ export class UserEntity extends BaseEntity {
 	public readonly status: UserStatus
 	public readonly meta: UserMetaType
 	public readonly location: UserLocation | null
+	public readonly ratings: UserRatings
 
-	constructor ({ id, bio, roles, dates, status, meta, location }: UserConstructorArgs) {
+	constructor ({ id, bio, roles, dates, status, meta, location, ratings }: UserConstructorArgs) {
 		super()
 		this.id = id
 		this.bio = generateDefaultBio(bio ?? {})
@@ -20,6 +21,7 @@ export class UserEntity extends BaseEntity {
 		this.status = status
 		this.meta = meta
 		this.location = location
+		this.ratings = ratings
 	}
 
 	isDeleted () {
@@ -43,6 +45,7 @@ type UserConstructorArgs = {
 	status: UserStatus
 	meta: UserMetaType
 	location: UserLocation | null
+	ratings: UserRatings
 }
 
 const generateDefaultBio = (bio: Partial<UserBio>): UserBio => {

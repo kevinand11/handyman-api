@@ -44,4 +44,8 @@ export class UsersUseCase {
 	async updateLocation (data: { userId: string, location: UserLocation }) {
 		return await this.repository.updateLocation(data.userId, data.location)
 	}
+
+	async updateRatings (input: { userId: string, ratings: number, add: boolean }) {
+		return await this.repository.updateRatings(input.userId, input.ratings, input.add)
+	}
 }
