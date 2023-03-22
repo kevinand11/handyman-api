@@ -37,5 +37,16 @@ export const usersRoutes = groupRoutes('/users', [
 				}
 			})
 		]
+	}, {
+		path: '/location',
+		method: 'get',
+		controllers: [
+			makeController(async (req) => {
+				return {
+					status: StatusCodes.Ok,
+					result: await UsersController.getUsersInLocation(req)
+				}
+			})
+		]
 	}
 ])

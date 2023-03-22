@@ -26,4 +26,30 @@ export class UsersController {
 		if (user?.isDeleted()) return null
 		return user
 	}
+
+	static async getUsersInLocation (req: Request) {
+		const { coords, radiusInKm } = validate({
+			coords: Schema.tuple([Schema.number(), Schema.number()]),
+			radiusInKm: Schema.number().default(10)
+		}, { ...req.query })
+		const hash = Validation.Geohash.encode(coords)
+		const query = req.query as QueryParams
+		const slicedHash = this.getHashSlice(hash, radiusInKm * 1000)
+		query.auth = [{ field: 'dates.deletedAt', value: null }, { field: 'location.hash', value: new RegExp(`^${slicedHash}`) }]
+		return await UsersUseCases.get(query)
+	}
+
+	private static getHashSlice (hash: string, radiusInM: number) {
+		if (radiusInM < 0) return hash.slice(0, 11)
+		if (radiusInM < 1) return hash.slice(0, 10)
+		if (radiusInM < 5) return hash.slice(0, 9)
+		if (radiusInM < 40) return hash.slice(0, 8)
+		if (radiusInM < 150) return hash.slice(0, 7)
+		if (radiusInM < 1200) return hash.slice(0, 6)
+		if (radiusInM < 5000) return hash.slice(0, 5)
+		if (radiusInM < 40000) return hash.slice(0, 4)
+		if (radiusInM < 160000) return hash.slice(0, 3)
+		if (radiusInM < 1200000) return hash.slice(0, 2)
+		return hash
+	}
 }
