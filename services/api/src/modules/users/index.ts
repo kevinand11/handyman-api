@@ -5,5 +5,5 @@ const userRepository = UserRepository.getInstance()
 
 export const UsersUseCases = new UsersUseCase(userRepository)
 
-export { generateDefaultUser, UserEntity } from './domain/entities/users'
+export { generateDefaultUser } from './domain/entities/users'
 export { EmbeddedUser, UserMeta } from './domain/types'
