@@ -2,6 +2,7 @@ import { makeEnum } from 'equipped'
 
 const Ar = makeEnum('AuthRole', {
 	isAdmin: 'isAdmin',
+	isActive: 'isActive',
 	isSuperAdmin: 'isSuperAdmin'
 } as const)
 

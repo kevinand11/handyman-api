@@ -4,17 +4,6 @@ import { groupRoutes, makeController, StatusCodes } from 'equipped'
 
 export const usersRoutes = groupRoutes('/users', [
 	{
-		path: '/',
-		method: 'get',
-		controllers: [
-			makeController(async (req) => {
-				return {
-					status: StatusCodes.Ok,
-					result: await UsersController.get(req)
-				}
-			})
-		]
-	}, {
 		path: '/:id',
 		method: 'get',
 		controllers: [
@@ -38,13 +27,13 @@ export const usersRoutes = groupRoutes('/users', [
 			})
 		]
 	}, {
-		path: '/location',
+		path: '/handymen/location',
 		method: 'get',
 		controllers: [
 			makeController(async (req) => {
 				return {
 					status: StatusCodes.Ok,
-					result: await UsersController.getUsersInLocation(req)
+					result: await UsersController.getHandyMenInLocation(req)
 				}
 			})
 		]

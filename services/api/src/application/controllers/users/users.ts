@@ -1,13 +1,8 @@
+import { AuthUserType } from '@modules/auth'
 import { UsersUseCases } from '@modules/users'
-import { QueryParams, Request, Schema, validate, Validation } from 'equipped'
+import { AuthRole, QueryKeys, QueryParams, Request, Schema, validate, Validation } from 'equipped'
 
 export class UsersController {
-	static async get (req: Request) {
-		const query = req.query as QueryParams
-		query.auth = [{ field: 'dates.deletedAt', value: null }]
-		return await UsersUseCases.get(query)
-	}
-
 	static async find (req: Request) {
 		const user = await UsersUseCases.find(req.params.id)
 		if (user?.isDeleted()) return null
@@ -27,7 +22,7 @@ export class UsersController {
 		return user
 	}
 
-	static async getUsersInLocation (req: Request) {
+	static async getHandyMenInLocation (req: Request) {
 		const { coords, radiusInKm } = validate({
 			coords: Schema.tuple([Schema.number(), Schema.number()]),
 			radiusInKm: Schema.number().default(10)
@@ -35,7 +30,13 @@ export class UsersController {
 		const hash = Validation.Geohash.encode(coords)
 		const query = req.query as QueryParams
 		const slicedHash = this.getHashSlice(hash, radiusInKm * 1000)
-		query.auth = [{ field: 'dates.deletedAt', value: null }, { field: 'location.hash', value: new RegExp(`^${slicedHash}`) }]
+		query.authType = QueryKeys.and
+		query.auth = [
+			{ field: 'bio.type', value: AuthUserType.handyman },
+			{ field: `roles.${AuthRole.isActive}`, value: true },
+			{ field: 'dates.deletedAt', value: null },
+			{ field: 'location.hash', value: new RegExp(`^${slicedHash}`) }
+		]
 		return await UsersUseCases.get(query)
 	}
 

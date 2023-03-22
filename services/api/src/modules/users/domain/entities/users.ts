@@ -1,3 +1,4 @@
+import { AuthUserType } from '@modules/auth'
 import { BaseEntity, Validation } from 'equipped'
 import { EmbeddedUser, UserBio, UserDates, UserLocation, UserMetaType, UserRoles, UserStatus } from '../types'
 
@@ -28,7 +29,7 @@ export class UserEntity extends BaseEntity {
 	getEmbedded (): EmbeddedUser {
 		return {
 			id: this.id,
-			bio: { name: this.bio.name, photo: this.bio.photo },
+			bio: { name: this.bio.name, photo: this.bio.photo, type: this.bio.type },
 			roles: this.roles
 		}
 	}
@@ -45,6 +46,7 @@ type UserConstructorArgs = {
 }
 
 const generateDefaultBio = (bio: Partial<UserBio>): UserBio => {
+	const type = bio?.type ?? AuthUserType.user
 	const first = Validation.capitalize(bio?.name?.first ?? 'Anon')
 	const last = Validation.capitalize(bio?.name?.last ?? 'Ymous')
 	const full = Validation.capitalize(bio?.name?.full ?? (first + ' ' + last))
@@ -52,7 +54,7 @@ const generateDefaultBio = (bio: Partial<UserBio>): UserBio => {
 	const description = bio?.description ?? ''
 	const photo = bio?.photo ?? null
 	const phone = bio?.phone ?? null
-	return { name: { first, last, full }, email, description, photo, phone }
+	return { type, name: { first, last, full }, email, description, photo, phone }
 }
 
 const generateDefaultRoles = (roles: Partial<UserRoles>): UserRoles => {
@@ -65,7 +67,7 @@ export const generateDefaultUser = (user: Partial<EmbeddedUser>): EmbeddedUser =
 	const roles = generateDefaultRoles(user?.roles ?? {})
 	return {
 		id,
-		bio: { name: bio.name, photo: bio.photo },
+		bio: { name: bio.name, photo: bio.photo, type: bio.type },
 		roles
 	}
 }

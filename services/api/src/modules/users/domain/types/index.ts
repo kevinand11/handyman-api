@@ -1,7 +1,8 @@
-import { Phone } from '@modules/auth'
+import { AuthUserType, Phone } from '@modules/auth'
 import { AuthRoles, MediaOutput } from 'equipped'
 
 export type UserBio = {
+	type: AuthUserType
 	email: string
 	name: { first: string, last: string, full: string }
 	description: string
@@ -25,7 +26,7 @@ export type UserMetaType = Record<UserMeta, number>
 
 export type EmbeddedUser = {
 	id: string
-	bio: Pick<UserBio, 'name' | 'photo'>
+	bio: Pick<UserBio, 'name' | 'photo' | 'type'>
 	roles: UserRoles
 }
 
