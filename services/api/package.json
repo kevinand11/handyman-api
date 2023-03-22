@@ -13,7 +13,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"equipped": "^4.1.6",
+		"equipped": "4.1.7",
 		"firebase-admin": "^11.5.0",
 		"flutterwave-node-v3": "^1.0.12",
 		"nodemailer": "^6.9.1"
