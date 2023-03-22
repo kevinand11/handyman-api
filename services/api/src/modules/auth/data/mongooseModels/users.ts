@@ -8,6 +8,10 @@ const UserSchema = new appInstance.dbs.mongo.Schema<UserFromModel>({
 		type: String,
 		default: () => appInstance.dbs.mongo.Id.toString()
 	},
+	type: {
+		type: String,
+		required: true
+	},
 	email: {
 		type: String,
 		trim: true,
@@ -37,10 +41,14 @@ const UserSchema = new appInstance.dbs.mongo.Schema<UserFromModel>({
 	},
 	phone: {
 		type: appInstance.dbs.mongo.Schema.Types.Mixed,
-		required: false,
-		default: null
+		required: true
 	},
 	isEmailVerified: {
+		type: Boolean,
+		required: false,
+		default: false
+	},
+	isPhoneVerified: {
 		type: Boolean,
 		required: false,
 		default: false

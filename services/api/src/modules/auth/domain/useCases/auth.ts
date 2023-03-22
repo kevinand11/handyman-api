@@ -14,19 +14,11 @@ export class AuthUseCase {
 		return await this.repository.authenticateUser(params, true, AuthTypes.email)
 	}
 
-	async googleSignIn (input: { idToken: string }) {
-		return await this.repository.googleSignIn(input.idToken)
-	}
-
-	async appleSignIn (input: { data: { idToken: string, email: string | null, firstName: string | null, lastName: string | null } }) {
-		return await this.repository.appleSignIn(input.data)
-	}
-
 	async registerUser (params: RegisterInput) {
 		const userModel: UserToModel = {
 			...params,
-			phone: null,
 			isEmailVerified: false,
+			isPhoneVerified: false,
 			authTypes: [AuthTypes.email]
 		}
 

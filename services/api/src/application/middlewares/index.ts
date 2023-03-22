@@ -17,6 +17,7 @@ export const isAuthenticated = makeMiddleware(
 	async (request) => {
 		await requireAuthUser(request)
 		if (!request.authUser?.isEmailVerified) throw new NotAuthenticatedError('verify your email address to proceed')
+		if (!request.authUser?.isPhoneVerified) throw new NotAuthenticatedError('verify your phone number to proceed')
 	}
 )
 

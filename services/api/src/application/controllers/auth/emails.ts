@@ -1,20 +1,18 @@
-import { AuthUseCases, AuthUsersUseCases, generateAuthOutput } from '@modules/auth'
+import { AuthUseCases, AuthUsersUseCases, AuthUserType, generateAuthOutput, Phone } from '@modules/auth'
 import { UploaderUseCases } from '@modules/storage'
 import { AuthTypes, Request, Schema, validate, Validation, ValidationError } from 'equipped'
 
 export class EmailsController {
 	static async signup (req: Request) {
-		const userCredential = {
-			email: req.body.email ?? '',
-			name: req.body.name,
-			description: req.body.description,
-			password: req.body.password,
+		const userCredential: Record<string, any> = {
+			...req.body,
 			photo: req.files.photo.at(0) ?? null
 		}
 
 		const user = await AuthUsersUseCases.findUserByEmail(userCredential.email)
 
-		const { email, name, description, password, photo: userPhoto } = validate({
+		const { type, email, name, description, password, phone, photo: userPhoto } = validate({
+			type: Schema.in(Object.values(AuthUserType)),
 			email: Schema.string().email().addRule((value) => {
 				const email = value as string
 				if (!user) return Validation.isValid(email)
@@ -23,6 +21,7 @@ export class EmailsController {
 				return Validation.isInvalid(['email already in use'], email)
 			}),
 			password: Schema.string().min(8).max(16),
+			phone: Schema.any<Phone>().addRule(Validation.isValidPhone()),
 			description: Schema.string(),
 			photo: Schema.file().image().nullable(),
 			name: Schema.object({
@@ -32,7 +31,7 @@ export class EmailsController {
 		}, userCredential)
 
 		const photo = userPhoto ? await UploaderUseCases.upload('profiles/photos', userPhoto) : null
-		const validateData = { name, email, password, photo, description }
+		const validateData = { type, name, email, password, photo, description, phone }
 
 		const updatedUser = user
 			? await AuthUsersUseCases.updateUserDetails({ userId: user.id, data: validateData })

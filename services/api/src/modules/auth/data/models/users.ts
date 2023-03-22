@@ -1,5 +1,5 @@
 import { AuthRoles, AuthTypes, Enum, MediaOutput } from 'equipped'
-import { Phone } from '../../domain/types'
+import { AuthUserType, Phone } from '../../domain/types'
 
 export interface UserFromModel extends UserToModel {
 	_id: string
@@ -9,12 +9,14 @@ export interface UserFromModel extends UserToModel {
 }
 
 export interface UserToModel {
+	type: AuthUserType
 	email: string
 	password: string
 	description: string
 	name: { first: string, last: string }
 	photo: MediaOutput | null
-	phone: Phone | null
+	phone: Phone
 	isEmailVerified: boolean
+	isPhoneVerified: boolean
 	authTypes: Enum<typeof AuthTypes>[]
 }

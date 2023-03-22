@@ -1,15 +1,17 @@
 import { AuthRoles, AuthTypes, BaseEntity, Enum, MediaOutput } from 'equipped'
-import { Phone, UserUpdateInput } from '../types'
+import { AuthUserType, Phone, UserUpdateInput } from '../types'
 
 export class AuthUserEntity extends BaseEntity {
 	public readonly id: string
+	public readonly type: AuthUserType
 	public readonly email: string
 	public readonly password: string
 	public readonly description: string
 	public readonly name: { first: string, last: string }
 	public readonly photo: MediaOutput | null
-	public readonly phone: Phone | null
+	public readonly phone: Phone
 	public readonly isEmailVerified: boolean
+	public readonly isPhoneVerified: boolean
 	public readonly authTypes: Enum<typeof AuthTypes>[]
 	public readonly roles: AuthRoles
 	public readonly lastSignedInAt: number
@@ -18,6 +20,7 @@ export class AuthUserEntity extends BaseEntity {
 	constructor (data: UserConstructorArgs) {
 		super()
 		this.id = data.id
+		this.type = data.type
 		this.email = data.email
 		this.password = data.password
 		this.name = data.name
@@ -25,6 +28,7 @@ export class AuthUserEntity extends BaseEntity {
 		this.photo = data.photo
 		this.phone = data.phone
 		this.isEmailVerified = data.isEmailVerified
+		this.isPhoneVerified = data.isPhoneVerified
 		this.authTypes = data.authTypes
 		this.roles = data.roles ?? {}
 		this.lastSignedInAt = data.lastSignedInAt
@@ -45,14 +49,16 @@ export class AuthUserEntity extends BaseEntity {
 
 export interface UserConstructorArgs {
 	id: string
+	type: AuthUserType
 	email: string
 	password: string
 	description: string
 	roles: AuthRoles
 	name: { first: string, last: string }
 	photo: MediaOutput | null
-	phone: Phone | null
+	phone: Phone
 	isEmailVerified: boolean
+	isPhoneVerified: boolean
 	authTypes: Enum<typeof AuthTypes>[]
 	lastSignedInAt: number
 	signedUpAt: number

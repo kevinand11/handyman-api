@@ -19,9 +19,12 @@ export const signOutUser = async (userId: string): Promise<boolean> => {
 export const generateAuthOutput = async (user: AuthUserEntity): Promise<AuthOutput & { user: AuthUserEntity }> => {
 	const accessToken = await makeAccessToken({
 		id: user.id,
+		type: user.type,
 		email: user.email,
+		phone: user.phone,
 		roles: user.roles,
-		isEmailVerified: user.isEmailVerified
+		isEmailVerified: user.isEmailVerified,
+		isPhoneVerified: user.isPhoneVerified
 	})
 	const refreshToken = await makeRefreshToken({ id: user.id })
 	return { accessToken, refreshToken, user }

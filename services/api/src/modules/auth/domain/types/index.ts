@@ -17,8 +17,10 @@ export interface RoleInput {
 }
 
 export interface RegisterInput extends UserUpdateInput {
+	type: AuthUserType
 	email: string
 	password: string
+	phone: Phone
 }
 
 export interface PasswordResetInput {
@@ -34,4 +36,9 @@ export interface Credential {
 export interface AuthOutput {
 	accessToken: string
 	refreshToken: string
+}
+
+export enum AuthUserType {
+	user = 'user',
+	handyman = 'handyman'
 }

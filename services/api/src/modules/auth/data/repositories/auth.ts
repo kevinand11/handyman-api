@@ -5,16 +5,11 @@ import {
 	BadRequestError,
 	EmailsList,
 	Enum,
-	Hash,
-	MediaOutput,
-	Random,
-	readEmailFromPug,
-	signinWithApple,
-	signinWithGoogle,
-	ValidationError
+	Hash, Random,
+	readEmailFromPug, ValidationError
 } from 'equipped'
 import { IAuthRepository } from '../../domain/irepositories/auth'
-import { Credential, PasswordResetInput, Phone } from '../../domain/types'
+import { Credential, PasswordResetInput } from '../../domain/types'
 import { UserMapper } from '../mappers/users'
 import { UserFromModel, UserToModel } from '../models/users'
 import User from '../mongooseModels/users'
@@ -90,8 +85,10 @@ export class AuthRepository implements IAuthRepository {
 		return this.mapper.mapFrom(user)!
 	}
 
-	async sendVerificationText (id: string, phone: Phone) {
-		const number = [phone.code, phone.number]
+	async sendVerificationText (id: string) {
+		const user = await User.findById(id)
+		if (!user) throw new BadRequestError('No user found')
+		const number = [user.phone.code, user.phone.number]
 		const token = Random.number(1e5, 1e6).toString()
 
 		// save to cache
@@ -112,9 +109,9 @@ export class AuthRepository implements IAuthRepository {
 		const userPhone = await appInstance.cache.get('phone-verification-token-' + token)
 		if (!userPhone) throw new BadRequestError('Invalid token')
 		await appInstance.cache.delete('phone-verification-token-' + token)
-		const [code, number, id] = userPhone.split('|')
+		const [_, __, id] = userPhone.split('|')
 
-		const user = await User.findByIdAndUpdate(id, { $set: { phone: { code, number } } }, { new: true })
+		const user = await User.findByIdAndUpdate(id, { $set: { isPhoneVerified: true } }, { new: true })
 		if (!user) throw new BadRequestError('No user found')
 
 		return this.mapper.mapFrom(user)!
@@ -153,54 +150,6 @@ export class AuthRepository implements IAuthRepository {
 		if (!user) throw new BadRequestError('No account with saved email exists')
 
 		return this.mapper.mapFrom(user)!
-	}
-
-	async googleSignIn (idToken: string) {
-		const data = await signinWithGoogle(idToken)
-		const email = data.email!.toLowerCase()
-
-		const photo = data.picture ? {
-			link: data.picture
-		} as unknown as MediaOutput : null
-
-		return this.authorizeSocial(AuthTypes.google, {
-			email, photo,
-			name: { first: data.first_name, last: data.last_name },
-			isEmailVerified: data.email_verified === 'true'
-		})
-	}
-
-	async appleSignIn ({ idToken, firstName, lastName }) {
-		const data = await signinWithApple(idToken).catch((e: any) => {
-			throw new BadRequestError(e.message)
-		})
-		const email = data.email?.toLowerCase()
-		if (!email) throw new BadRequestError('can\'t access your email. Signin another way')
-
-		return this.authorizeSocial(AuthTypes.apple, {
-			email, photo: null,
-			name: { first: firstName ?? 'Apple User', last: lastName ?? '' },
-			isEmailVerified: data.email_verified === 'true'
-		})
-	}
-
-	private async authorizeSocial (type: Enum<typeof AuthTypes>, data: Pick<UserToModel, 'email' | 'name' | 'photo' | 'isEmailVerified'>) {
-		const userData = await User.findOne({ email: data.email })
-
-		if (!userData) return await this.addNewUser({
-			name: data.name,
-			description: '',
-			email: data.email,
-			photo: data.photo,
-			authTypes: [type],
-			password: '', phone: null,
-			isEmailVerified: data.isEmailVerified
-		}, type)
-
-		return await this.authenticateUser({
-			email: userData.email,
-			password: ''
-		}, false, type)
 	}
 
 	private async signInUser (user: UserFromModel, type: Enum<typeof AuthTypes>) {
