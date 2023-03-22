@@ -35,7 +35,7 @@ export class UserController {
 
 	static async updateRole (req: Request) {
 		const { role, userId, value } = validate({
-			role: Schema.in([AuthRole.isAdmin, AuthRole.isTutor]),
+			role: Schema.in([AuthRole.isAdmin]),
 			userId: Schema.string().min(1),
 			value: Schema.boolean()
 		}, req.body)

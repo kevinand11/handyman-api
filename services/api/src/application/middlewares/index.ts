@@ -33,11 +33,3 @@ export const isAdmin = makeMiddleware(
 		if (!isAdmin) throw new NotAuthorizedError()
 	}
 )
-
-export const isSubscribed = makeMiddleware(
-	async (request) => {
-		const isSubscribed = request.authUser?.roles?.[AuthRole.isSubscribed]
-		if (!request.authUser) throw new NotAuthenticatedError()
-		if (!isSubscribed) throw new NotAuthorizedError('You need an active subscription to proceed')
-	}
-)

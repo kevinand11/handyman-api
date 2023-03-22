@@ -37,6 +37,6 @@ const WalletSchema = new appInstance.dbs.mongo.Schema<WalletFromModel>({
 	}
 }, { timestamps: { currentTime: Date.now }, minimize: false })
 
-export const Wallet = appInstance.dbs.mongo.use('payment').model<WalletFromModel>('Wallet', WalletSchema)
+export const Wallet = appInstance.dbs.mongo.use().model<WalletFromModel>('PaymentWallet', WalletSchema)
 
 export const WalletChange = appInstance.dbs.mongo.change(Wallet, WalletDbChangeCallbacks, new WalletMapper().mapFrom)

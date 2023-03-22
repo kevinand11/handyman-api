@@ -1,10 +1,8 @@
 import { UsersUseCases } from '@modules/users'
-import { isProd } from '@utils/environment'
 import { publishers } from '@utils/events'
 import { DbChangeCallbacks, deleteCachedAccessToken } from 'equipped'
 import { UserFromModel } from '../../data/models/users'
 import { AuthUserEntity } from '../../domain/entities/users'
-import { subscribeToMailingList } from '../mailing'
 
 export const UserDbChangeCallbacks: DbChangeCallbacks<UserFromModel, AuthUserEntity> = {
 	created: async ({ after }) => {
@@ -20,7 +18,6 @@ export const UserDbChangeCallbacks: DbChangeCallbacks<UserFromModel, AuthUserEnt
 			}
 		})
 		await UsersUseCases.updateRoles({ id: after.id, data: after.roles, timestamp: Date.now() })
-		if (isProd) await subscribeToMailingList(after.email)
 	},
 	updated: async ({ before, after, changes }) => {
 		if (changes.photo && before.photo) await publishers.DELETEFILE.publish(before.photo)

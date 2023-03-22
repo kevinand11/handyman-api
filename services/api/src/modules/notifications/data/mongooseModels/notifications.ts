@@ -48,6 +48,6 @@ const NotificationSchema = new appInstance.dbs.mongo.Schema<NotificationFromMode
 	}
 }, { timestamps: { currentTime: Date.now }, minimize: false })
 
-export const Notification = appInstance.dbs.mongo.use('notifications').model<NotificationFromModel>('Notification', NotificationSchema)
+export const Notification = appInstance.dbs.mongo.use().model<NotificationFromModel>('Notification', NotificationSchema)
 
 export const NotificationChange = appInstance.dbs.mongo.change(Notification, NotificationDbChangeCallbacks, new NotificationMapper().mapFrom)

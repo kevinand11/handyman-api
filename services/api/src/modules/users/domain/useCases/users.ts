@@ -1,6 +1,6 @@
 import { QueryParams } from 'equipped'
 import { IUserRepository } from '../irepositories/users'
-import { UserAccount, UserBio, UserRoles, UserSchoolData } from '../types'
+import { UserBio, UserMeta, UserRoles } from '../types'
 
 export class UsersUseCase {
 	repository: IUserRepository
@@ -29,7 +29,7 @@ export class UsersUseCase {
 		return await this.repository.getUsers(query)
 	}
 
-	async incrementMeta (params: { id: string, value: 1 | -1, property: keyof UserAccount['meta'] }) {
+	async incrementMeta (params: { id: string, value: 1 | -1, property: UserMeta }) {
 		return await this.repository.incrementUserMetaProperty(params.id, params.property, params.value)
 	}
 
@@ -39,17 +39,5 @@ export class UsersUseCase {
 
 	async resetAllUsersStatus () {
 		return await this.repository.resetAllUsersStatus()
-	}
-
-	async resetRankings (key: keyof UserAccount['rankings']) {
-		return await this.repository.resetRankings(key)
-	}
-
-	async updateNerdScore (params: { userId: string, amount: number }) {
-		return await this.repository.updateNerdScore(params.userId, params.amount)
-	}
-
-	async updateSchool (params: { userId: string, data: UserSchoolData }) {
-		return await this.repository.updateUserSchoolData(params.userId, params.data)
 	}
 }

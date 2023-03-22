@@ -7,7 +7,6 @@ export const appId = getEnvOrFail('APP_ID')
 
 export const environment = getEnvOrFail('ENVIRONMENT')
 export const isDev = environment === 'local'
-export const isProd = environment === 'production'
 
 const mails = JSON.parse(getEnvOrFail('EMAILS') || '{}')
 export const emails = Object.fromEntries(

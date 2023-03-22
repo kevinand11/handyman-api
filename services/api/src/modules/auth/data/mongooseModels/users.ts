@@ -68,7 +68,7 @@ const UserSchema = new appInstance.dbs.mongo.Schema<UserFromModel>({
 	}
 })
 
-export const User = appInstance.dbs.mongo.use('auth').model<UserFromModel>('User', UserSchema)
+export const User = appInstance.dbs.mongo.use().model<UserFromModel>('AuthUser', UserSchema)
 
 export const UserChange = appInstance.dbs.mongo.change(User, UserDbChangeCallbacks, new UserMapper().mapFrom)
 

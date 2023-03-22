@@ -1,7 +1,6 @@
 import { deleteUnverifiedUsers } from '@modules/auth'
 import { EmailErrorsUseCases, NotificationsUseCases, PhoneErrorsUseCases, sendMailAndCatchError, sendTextAndCatchError } from '@modules/notifications'
 import { MethodsUseCases, retryTransactions } from '@modules/payment'
-import { UserRankings, UsersUseCases } from '@modules/users'
 import { appInstance } from '@utils/types'
 import { CronTypes } from 'equipped'
 
@@ -28,15 +27,12 @@ export const startJobs = async () => {
 				])
 			}
 			if (type === CronTypes.daily) {
-				await UsersUseCases.resetRankings(UserRankings.daily)
 				await deleteUnverifiedUsers()
 			}
 			if (type === CronTypes.weekly) {
-				await UsersUseCases.resetRankings(UserRankings.weekly)
 				await NotificationsUseCases.deleteOldSeen()
 			}
 			if (type === CronTypes.monthly) {
-				await UsersUseCases.resetRankings(UserRankings.monthly)
 				await MethodsUseCases.markExpireds()
 			}
 		}

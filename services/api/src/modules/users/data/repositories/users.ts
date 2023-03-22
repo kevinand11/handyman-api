@@ -1,7 +1,6 @@
 import { appInstance } from '@utils/types'
 import { IUserRepository } from '../../domain/irepositories/users'
-import { UserAccount, UserBio, UserRankings, UserRoles, UserSchoolData } from '../../domain/types'
-import { getDateDifference } from '../../utils/dates'
+import { UserBio, UserMeta, UserRoles } from '../../domain/types'
 import { UserMapper } from '../mappers/users'
 import { User } from '../mongooseModels/users'
 
@@ -40,61 +39,18 @@ export class UserRepository implements IUserRepository {
 		}, { upsert: true })
 	}
 
-	async updateNerdScore (userId: string, amount: number) {
-		const rankings = Object.fromEntries(
-			Object.keys(UserRankings).map((key) => [`account.rankings.${key}.value`, amount])
-		)
-		const lastUpdatedAt = Object.fromEntries(
-			Object.keys(UserRankings).map((key) => [`account.rankings.${key}.lastUpdatedAt`, amount])
-		)
-		const user = await User.findByIdAndUpdate(userId, {
-			$set: lastUpdatedAt, $inc: rankings
-		})
-		return !!user
-	}
-
-	async resetRankings (key: keyof UserAccount['rankings']) {
-		const res = await User.updateMany({}, {
-			$set: { [`account.rankings.${key}`]: { value: 0, lastUpdatedAt: Date.now() } }
-		})
-		return !!res.acknowledged
-	}
-
 	async updateUserWithRoles (userId: string, data: UserRoles) {
 		await User.findByIdAndUpdate(userId, {
 			$set: { roles: data }
 		}, { upsert: true })
 	}
 
-	async incrementUserMetaProperty (userId: string, propertyName: keyof UserAccount['meta'], value: 1 | -1) {
+	async incrementUserMetaProperty (userId: string, propertyName: UserMeta, value: 1 | -1) {
 		await User.findByIdAndUpdate(userId, {
 			$inc: {
-				[`account.meta.${propertyName}`]: value
+				[`meta.${propertyName}`]: value
 			}
 		})
-	}
-
-	private async updateUserStreak (userId: string) {
-		const res = { skip: false, increase: false, reset: false, streak: 0 }
-		await User.collection.conn.transaction(async (session) => {
-			const userModel = await User.findById(userId, null, { session })
-			const user = this.mapper.mapFrom(userModel)
-			const { lastEvaluatedAt = 0, count = 0, longestStreak = 0 } = user?.account?.streak ?? {}
-			const { isLessThan, isNextDay } = getDateDifference(new Date(lastEvaluatedAt), new Date())
-
-			res.skip = isLessThan
-			res.increase = !isLessThan && isNextDay
-			res.reset = !isLessThan && !isNextDay
-			res.streak = !isLessThan && isNextDay ? count + 1 : 1
-
-			const updateData = {
-				'account.streak.lastEvaluatedAt': Date.now(),
-				'account.streak.count': res.increase ? count + 1 : 1
-			}
-			if (res.increase && count + 1 > longestStreak) updateData['account.streak.longestStreak'] = count + 1
-			if (!res.skip) await User.findByIdAndUpdate(userId, { $set: updateData }, { session })
-		})
-		return res
 	}
 
 	async updateUserStatus (userId: string, socketId: string, add: boolean) {
@@ -102,7 +58,6 @@ export class UserRepository implements IUserRepository {
 			$set: { 'status.lastUpdatedAt': Date.now() },
 			[add ? '$addToSet' : '$pull']: { 'status.connections': socketId }
 		})
-		if (add) await this.updateUserStreak(userId)
 		return !!user
 	}
 
@@ -111,10 +66,5 @@ export class UserRepository implements IUserRepository {
 			$set: { 'status.connections': [] }
 		})
 		return !!res.acknowledged
-	}
-
-	async updateUserSchoolData (userId: string, data: UserSchoolData) {
-		const user = await User.findByIdAndUpdate(userId, { $set: { school: data } })
-		return !!user
 	}
 }

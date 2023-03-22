@@ -48,6 +48,6 @@ const TransactionSchema = new appInstance.dbs.mongo.Schema<TransactionFromModel>
 	}
 }, { timestamps: { currentTime: Date.now }, minimize: false })
 
-export const Transaction = appInstance.dbs.mongo.use('payment').model<TransactionFromModel>('Transaction', TransactionSchema)
+export const Transaction = appInstance.dbs.mongo.use().model<TransactionFromModel>('PaymentTransaction', TransactionSchema)
 
 export const TransactionChange = appInstance.dbs.mongo.change(Transaction, TransactionDbChangeCallbacks, new TransactionMapper().mapFrom)

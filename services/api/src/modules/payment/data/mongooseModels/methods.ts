@@ -37,6 +37,6 @@ const MethodSchema = new appInstance.dbs.mongo.Schema<MethodFromModel>({
 	}
 }, { timestamps: { currentTime: Date.now }, minimize: false })
 
-export const Method = appInstance.dbs.mongo.use('payment').model<MethodFromModel>('Method', MethodSchema)
+export const Method = appInstance.dbs.mongo.use().model<MethodFromModel>('PaymentMethod', MethodSchema)
 
 export const MethodChange = appInstance.dbs.mongo.change(Method, MethodDbChangeCallbacks, new MethodMapper().mapFrom)
