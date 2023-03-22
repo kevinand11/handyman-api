@@ -9,7 +9,7 @@ import {
 	readEmailFromPug, ValidationError
 } from 'equipped'
 import { IAuthRepository } from '../../domain/irepositories/auth'
-import { Credential, PasswordResetInput } from '../../domain/types'
+import { Credential, PasswordResetInput, Phone } from '../../domain/types'
 import { UserMapper } from '../mappers/users'
 import { UserFromModel, UserToModel } from '../models/users'
 import User from '../mongooseModels/users'
@@ -85,10 +85,8 @@ export class AuthRepository implements IAuthRepository {
 		return this.mapper.mapFrom(user)!
 	}
 
-	async sendVerificationText (id: string) {
-		const user = await User.findById(id)
-		if (!user) throw new BadRequestError('No user found')
-		const number = [user.phone.code, user.phone.number]
+	async sendVerificationText (id: string, phone: Phone) {
+		const number = [phone.code, phone.number]
 		const token = Random.number(1e5, 1e6).toString()
 
 		// save to cache
