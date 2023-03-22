@@ -1,6 +1,6 @@
 import { QueryParams } from 'equipped'
 import { IUserRepository } from '../irepositories/users'
-import { UserBio, UserMeta, UserRoles } from '../types'
+import { UserBio, UserLocation, UserMeta, UserRoles } from '../types'
 
 export class UsersUseCase {
 	repository: IUserRepository
@@ -39,5 +39,9 @@ export class UsersUseCase {
 
 	async resetAllUsersStatus () {
 		return await this.repository.resetAllUsersStatus()
+	}
+
+	async updateLocation (data: { userId: string, location: UserLocation }) {
+		return await this.repository.updateLocation(data.userId, data.location)
 	}
 }

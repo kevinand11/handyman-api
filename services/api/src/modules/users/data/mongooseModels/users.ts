@@ -50,6 +50,11 @@ const UserSchema = new appInstance.dbs.mongo.Schema<UserFromModel>({
 			default: 0
 		}
 	},
+	location: {
+		type: appInstance.dbs.mongo.Schema.Types.Mixed,
+		required: false,
+		default: null
+	},
 	meta: Meta
 }, { minimize: false })
 

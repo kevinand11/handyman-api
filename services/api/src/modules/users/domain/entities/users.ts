@@ -1,5 +1,5 @@
 import { BaseEntity, Validation } from 'equipped'
-import { EmbeddedUser, UserBio, UserDates, UserMetaType, UserRoles, UserStatus } from '../types'
+import { EmbeddedUser, UserBio, UserDates, UserLocation, UserMetaType, UserRoles, UserStatus } from '../types'
 
 export class UserEntity extends BaseEntity {
 	public readonly id: string
@@ -8,8 +8,9 @@ export class UserEntity extends BaseEntity {
 	public readonly dates: UserDates
 	public readonly status: UserStatus
 	public readonly meta: UserMetaType
+	public readonly location: UserLocation | null
 
-	constructor ({ id, bio, roles, dates, status, meta }: UserConstructorArgs) {
+	constructor ({ id, bio, roles, dates, status, meta, location }: UserConstructorArgs) {
 		super()
 		this.id = id
 		this.bio = generateDefaultBio(bio ?? {})
@@ -17,6 +18,7 @@ export class UserEntity extends BaseEntity {
 		this.dates = dates
 		this.status = status
 		this.meta = meta
+		this.location = location
 	}
 
 	isDeleted () {
@@ -39,6 +41,7 @@ type UserConstructorArgs = {
 	dates: UserDates
 	status: UserStatus
 	meta: UserMetaType
+	location: UserLocation | null
 }
 
 const generateDefaultBio = (bio: Partial<UserBio>): UserBio => {

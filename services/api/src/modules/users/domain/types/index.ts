@@ -30,9 +30,11 @@ export type EmbeddedUser = {
 }
 
 export enum UserMeta {
-	connects = 'connects',
+	jobs = 'jobs',
+	jobsHandled = 'jobsHandled'
+}
 
-	courses = 'courses',
-	quizzes = 'quizzes',
-	folders = 'folders'
+export type UserLocation = {
+	coords: [number, number]
+	hash: string
 }

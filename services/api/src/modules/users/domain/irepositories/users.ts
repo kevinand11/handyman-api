@@ -1,6 +1,6 @@
 import { QueryParams, QueryResults } from 'equipped'
 import { UserEntity } from '../entities/users'
-import { UserBio, UserMeta, UserRoles } from '../types'
+import { UserBio, UserLocation, UserMeta, UserRoles } from '../types'
 
 export interface IUserRepository {
 	getUsers (query: QueryParams): Promise<QueryResults<UserEntity>>
@@ -16,6 +16,8 @@ export interface IUserRepository {
 	incrementUserMetaProperty (userId: string, propertyName: UserMeta, value: 1 | -1): Promise<void>
 
 	updateUserStatus (userId: string, socketId: string, add: boolean): Promise<boolean>
+
+	updateLocation (userId: string, location: UserLocation): Promise<UserEntity | null>
 
 	resetAllUsersStatus (): Promise<boolean>
 }

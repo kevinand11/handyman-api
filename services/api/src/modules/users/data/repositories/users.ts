@@ -1,6 +1,6 @@
 import { appInstance } from '@utils/types'
 import { IUserRepository } from '../../domain/irepositories/users'
-import { UserBio, UserMeta, UserRoles } from '../../domain/types'
+import { UserBio, UserLocation, UserMeta, UserRoles } from '../../domain/types'
 import { UserMapper } from '../mappers/users'
 import { User } from '../mongooseModels/users'
 
@@ -66,5 +66,10 @@ export class UserRepository implements IUserRepository {
 			$set: { 'status.connections': [] }
 		})
 		return !!res.acknowledged
+	}
+
+	async updateLocation (userId: string, location: UserLocation) {
+		const user = await User.findByIdAndUpdate(userId, { $set: { location } }, { new: true })
+		return this.mapper.mapFrom(user)
 	}
 }

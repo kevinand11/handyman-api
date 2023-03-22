@@ -12,15 +12,11 @@ export enum TransactionStatus {
 }
 
 export enum TransactionType {
-	newCard = 'newCard',
-	subscription = 'subscription'
+	newCard = 'newCard'
 }
 
 export type TransactionData = {
 	type: TransactionType.newCard
-} | {
-	type: TransactionType.subscription
-	subscriptionId: string
 }
 
 export enum MethodType {

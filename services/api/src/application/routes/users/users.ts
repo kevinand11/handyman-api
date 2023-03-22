@@ -1,4 +1,5 @@
 import { UsersController } from '@application/controllers/users/users'
+import { isAuthenticated } from '@application/middlewares'
 import { groupRoutes, makeController, StatusCodes } from 'equipped'
 
 export const usersRoutes = groupRoutes('/users', [
@@ -21,6 +22,18 @@ export const usersRoutes = groupRoutes('/users', [
 				return {
 					status: StatusCodes.Ok,
 					result: await UsersController.find(req)
+				}
+			})
+		]
+	}, {
+		path: '/location',
+		method: 'post',
+		controllers: [
+			isAuthenticated,
+			makeController(async (req) => {
+				return {
+					status: StatusCodes.Ok,
+					result: await UsersController.updateLocation(req)
 				}
 			})
 		]
