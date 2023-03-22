@@ -23,7 +23,7 @@ export class ChatEntity extends BaseEntity {
 		this.readAt = readAt
 	}
 
-	get members () {
+	members () {
 		return [this.from, this.to]
 	}
 }

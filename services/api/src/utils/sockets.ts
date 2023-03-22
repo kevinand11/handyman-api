@@ -12,6 +12,12 @@ export const registerSockets = () => {
 		.register('interactions/tags', isOpen)
 		.register('interactions/views', isOpen)
 
+		.register('jobs/categories', isOpen)
+		.register('jobs/reviews', isOpen)
+
+		.register('messaging/chats', isMine)
+		.register('messaging/chatMetas', isMine)
+
 		.register('notifications/notifications', isMine)
 
 		.register('payment/methods', isMine)

@@ -33,8 +33,11 @@ export class ChatRepository implements IChatRepository {
 			}).save({ session })
 			await ChatMeta.findOneAndUpdate(
 				getChatMetaCondition(data.from, data.to),
-				{ $set: { last: chat }, $max: { [`readAt.${data.from}`]: createdAt } },
-				{ session })
+				{
+					$set: { last: chat },
+					$max: { [`readAt.${data.from}`]: createdAt },
+					$setOnInsert: { members: [data.from, data.to] }
+				}, { session, upsert: true })
 			res = chat
 			return chat
 		})
@@ -57,7 +60,7 @@ export class ChatRepository implements IChatRepository {
 
 	async update (id: string, userId: string, data: Partial<ChatToModel>) {
 		const chat = await Chat.findOneAndUpdate({
-			_id: id, 'from.id': userId
+			_id: id, from: userId
 		}, { $set: data }, { new: true })
 		return this.mapper.mapFrom(chat)
 	}
@@ -73,7 +76,7 @@ export class ChatRepository implements IChatRepository {
 			)
 			if (!chatMeta) return false
 			await Chat.updateMany(
-				{ to, [`readAt.${from}`]: null },
+				{ to: from, from: to, [`readAt.${from}`]: null },
 				{ $set: { [`readAt.${from}`]: readAt } },
 				{ session }
 			)
@@ -84,7 +87,7 @@ export class ChatRepository implements IChatRepository {
 	}
 
 	async delete (id: string, userId: string) {
-		const chat = await Chat.findOneAndDelete({ _id: id, 'from.id': userId })
+		const chat = await Chat.findOneAndDelete({ _id: id, from: userId })
 		return !!chat
 	}
 }

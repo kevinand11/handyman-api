@@ -9,8 +9,8 @@ import { ChatEntity } from '../../domain/entities/chats'
 export const ChatDbChangeCallbacks: DbChangeCallbacks<ChatFromModel, ChatEntity> = {
 	created: async ({ after }) => {
 		await appInstance.listener.created([
-			...(after.members.map((userId) => `messaging/chats/${userId}`)),
-			...(after.members.map((userId) => `messaging/chats/${after.id}/${userId}`)),
+			...(after.members().map((userId) => `messaging/chats/${userId}`)),
+			...(after.members().map((userId) => `messaging/chats/${after.id}/${userId}`)),
 		], after)
 		const body = after.media ? 'Shared a file' : after.body
 		await sendPushNotification({
@@ -24,16 +24,16 @@ export const ChatDbChangeCallbacks: DbChangeCallbacks<ChatFromModel, ChatEntity>
 	},
 	updated: async ({ after, before, changes }) => {
 		await appInstance.listener.created([
-			...(after.members.map((userId) => `messaging/chats/${userId}`)),
-			...(after.members.map((userId) => `messaging/chats/${after.id}/${userId}`)),
+			...(after.members().map((userId) => `messaging/chats/${userId}`)),
+			...(after.members().map((userId) => `messaging/chats/${after.id}/${userId}`)),
 		], after)
 		await ChatMetasUseCases.updateLastChat({ ...after, _id: after.id, id: undefined } as any)
 		if (changes.media && before.media) await publishers.DELETEFILE.publish(before.media)
 	},
 	deleted: async ({ before }) => {
 		await appInstance.listener.created([
-			...(before.members.map((userId) => `messaging/chats/${userId}`)),
-			...(before.members.map((userId) => `messaging/chats/${before.id}/${userId}`)),
+			...(before.members().map((userId) => `messaging/chats/${userId}`)),
+			...(before.members().map((userId) => `messaging/chats/${before.id}/${userId}`)),
 		], before)
 		if (before.media) await publishers.DELETEFILE.publish(before.media)
 	}
