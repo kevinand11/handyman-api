@@ -11,7 +11,6 @@ type ChatPushData = {
 	data: {
 		id: string
 		to: string
-		data: Record<string, any>
 	}
 }
 
