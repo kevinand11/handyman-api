@@ -1,4 +1,4 @@
-import { CategorysUseCases } from '@modules/jobs'
+import { CategoriesUseCases } from '@modules/jobs'
 import { NotAuthorizedError, QueryParams, Request, Schema, validate } from 'equipped'
 
 export class CategoryController {
@@ -7,18 +7,18 @@ export class CategoryController {
 	})
 
 	static async find (req: Request) {
-		return await CategorysUseCases.find(req.params.id)
+		return await CategoriesUseCases.find(req.params.id)
 	}
 
 	static async get (req: Request) {
 		const query = req.query as QueryParams
-		return await CategorysUseCases.get(query)
+		return await CategoriesUseCases.get(query)
 	}
 
 	static async update (req: Request) {
 		const data = validate(this.schema(), req.body)
 
-		const updatedCategory = await CategorysUseCases.update({ id: req.params.id, data })
+		const updatedCategory = await CategoriesUseCases.update({ id: req.params.id, data })
 		if (updatedCategory) return updatedCategory
 		throw new NotAuthorizedError()
 	}
@@ -26,11 +26,11 @@ export class CategoryController {
 	static async create (req: Request) {
 		const data = validate(this.schema(), req.body)
 
-		return await CategorysUseCases.add(data)
+		return await CategoriesUseCases.add(data)
 	}
 
 	static async delete (req: Request) {
-		const isDeleted = await CategorysUseCases.delete({ id: req.params.id })
+		const isDeleted = await CategoriesUseCases.delete({ id: req.params.id })
 		if (isDeleted) return isDeleted
 		throw new NotAuthorizedError()
 	}

@@ -2,7 +2,7 @@ import { QueryParams } from 'equipped'
 import { CategoryToModel } from '../../data/models/categories'
 import { ICategoryRepository } from '../irepositories/categories'
 
-export class CategorysUseCase {
+export class CategoriesUseCase {
 	private repository: ICategoryRepository
 
 	constructor (repository: ICategoryRepository) {

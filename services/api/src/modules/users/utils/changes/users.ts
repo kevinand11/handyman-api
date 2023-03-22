@@ -1,3 +1,4 @@
+import { ReviewsUseCases } from '@modules/jobs'
 import { appInstance } from '@utils/types'
 import { DbChangeCallbacks } from 'equipped'
 import { UserFromModel } from '../../data/models/users'
@@ -10,7 +11,9 @@ export const UserDbChangeCallbacks: DbChangeCallbacks<UserFromModel, UserEntity>
 	updated: async ({ after, changes }) => {
 		await appInstance.listener.created(['users/users', `users/users/${after.id}`], after)
 		const updatedBioOrRoles = !!changes.bio || !!changes.roles
-		if (updatedBioOrRoles) await Promise.all(([] as any[]).map(async (useCase) => await useCase.updateUserBio(after.getEmbedded())))
+		if (updatedBioOrRoles) await Promise.all(([
+			ReviewsUseCases
+		]).map(async (useCase) => await useCase.updateUserBio(after.getEmbedded())))
 	},
 	deleted: async ({ before }) => {
 		await appInstance.listener.created(['users/users', `users/users/${before.id}`], before)
