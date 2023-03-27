@@ -1,5 +1,6 @@
 import { AuthUserType, Phone } from '@modules/auth'
 import { AuthRoles, MediaOutput } from 'equipped'
+export * from './verifications'
 
 export type UserBio = {
 	type: AuthUserType

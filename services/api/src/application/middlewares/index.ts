@@ -1,3 +1,4 @@
+import { AuthUserType } from '@modules/auth'
 import {
 	AuthRole,
 	makeMiddleware,
@@ -24,6 +25,14 @@ export const isAuthenticated = makeMiddleware(
 export const hasRefreshToken = makeMiddleware(
 	async (request) => {
 		await requireRefreshUser(request)
+	}
+)
+
+export const isHandyman = makeMiddleware(
+	async (request) => {
+		const isHandyman = request.authUser?.type === AuthUserType.handyman
+		if (!request.authUser) throw new NotAuthenticatedError()
+		if (!isHandyman) throw new NotAuthorizedError()
 	}
 )
 
