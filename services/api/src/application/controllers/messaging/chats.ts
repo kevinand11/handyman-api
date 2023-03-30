@@ -26,7 +26,7 @@ export class ChatController {
 			to: Schema.string().min(1),
 			media: Schema.file().nullable()
 		}, {
-			...req.body, media: req.files.media?.[0] ?? null,
+			...req.body, media: req.files.media?.at(0) ?? null,
 		})
 
 		const user = await UsersUseCases.find(to)

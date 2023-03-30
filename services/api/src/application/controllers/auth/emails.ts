@@ -6,7 +6,7 @@ export class EmailsController {
 	static async signup (req: Request) {
 		const userCredential: Record<string, any> = {
 			...req.body,
-			photo: req.files.photo.at(0) ?? null
+			photo: req.files.photo?.at(0) ?? null
 		}
 
 		const user = await AuthUsersUseCases.findUserByEmail(userCredential.email)
