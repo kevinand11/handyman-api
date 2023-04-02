@@ -1,9 +1,8 @@
 import { appInstance } from '@utils/types'
-import { AuthRole, OnJoinFn } from 'equipped'
+import { OnJoinFn } from 'equipped'
 
 export const registerSockets = () => {
 	// const isAdmin: OnJoinFn = async ({ channel, user }) => user?.roles?.[AuthRole.isAdmin] ? channel : null
-	const isAdminOrMine: OnJoinFn = async ({ channel, user }) => user?.roles?.[AuthRole.isAdmin] ? channel : `${channel}/${user!.id}`
 	const isMine: OnJoinFn = async ({ channel, user }) => user ? `${channel}/${user.id}` : null
 	const isOpen: OnJoinFn = async ({ channel }) => channel
 
@@ -26,5 +25,5 @@ export const registerSockets = () => {
 		.register('payment/wallets', isMine)
 
 		.register('users/users', isOpen)
-		.register('users/verifications', isAdminOrMine)
+		.register('users/verifications', isOpen)
 }
